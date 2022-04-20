@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Cannon.h"
 #include "Camera/CameraComponent.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Pawn.h"
@@ -34,22 +35,43 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
 	UCameraComponent* Camera;
 
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
+	UArrowComponent* CannonSpawnPoint;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement")
 	float MovementSpeed = 100;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement")
 	float RotationSpeed = 100;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement")
+	float InterpolationKey = 0.1f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement")
+	float TurretRotationInterpolationKey = 0.1f;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Guns")
+	TSubclassOf<ACannon> CannonClass;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Guns")
+	ACannon* Cannon;
+	
 	// Sets default values for this pawn's properties
 	ATankPawn();
 
 	void MoveForward(float Scale);
 	void MoveRight(float Scale);
+	void RotateRight(float Scale);
+
+	virtual void PossessedBy(AController* NewController) override;
+
+	void Fire();
+	void FireSpecial();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
+	virtual void Destroyed() override;
 
 
 public:	
@@ -61,6 +83,10 @@ public:
 
 private:
 	float ForwardScale = 0;
+	float CurrentForwardScale = 0;
 	float RightScale = 0;
+	float RotateScale = 0;
+	float CurrentRotateScale = 0;
 
+	class ATankPlayerController* TankController;
 };

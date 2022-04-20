@@ -21,11 +21,20 @@ public:
 	void OnMoveForward(float Scale);
 	void OnMoveRight(float Scale);
 	void OnRotateRight(float Scale);
+
+	void OnFire();
+	void OnFireSpecial();
+	
 	virtual void SetupInputComponent() override;
 	virtual void OnPossess(APawn* InPawn) override;
+
+	virtual void Tick(float DeltaSeconds) override;
+	FVector GetMousePos() const {return MousePos;}
 
 protected:
 	UPROPERTY()
 	ATankPawn* TankPawn;
+	UPROPERTY()
+	FVector MousePos;
 
 };
