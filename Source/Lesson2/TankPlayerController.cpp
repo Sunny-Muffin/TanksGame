@@ -17,6 +17,8 @@ void ATankPlayerController::SetupInputComponent()
 	InputComponent->BindAction("Fire", IE_Pressed, this, &ATankPlayerController::OnFire);
 	InputComponent->BindAction("FireSpecial", IE_Pressed, this, &ATankPlayerController::OnFireSpecial);
 
+	InputComponent->BindAction("ChangeCannon", IE_Pressed, this, &ATankPlayerController::OnChangeCannon);
+	
 	SetShowMouseCursor(true);
 }
 
@@ -54,6 +56,12 @@ void ATankPlayerController::OnFireSpecial()
 {
 	if(TankPawn)
 		TankPawn->FireSpecial();
+}
+
+void ATankPlayerController::OnChangeCannon()
+{
+	if(TankPawn)
+		TankPawn->ChangeCannon();
 }
 
 void ATankPlayerController::Tick(float DeltaSeconds)

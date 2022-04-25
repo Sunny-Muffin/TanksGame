@@ -24,6 +24,7 @@ public:
 
 	void OnFire();
 	void OnFireSpecial();
+	void OnChangeCannon();
 	
 	virtual void SetupInputComponent() override;
 	virtual void OnPossess(APawn* InPawn) override;

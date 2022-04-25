@@ -20,8 +20,8 @@ class LESSON2_API ATankPawn : public APawn
 	
 
 public:
-	//UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
-	//UBoxComponent* Collision;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
+	UBoxComponent* Collision;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
 	UStaticMeshComponent* TankBody;
@@ -55,6 +55,11 @@ public:
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Guns")
 	ACannon* Cannon;
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Guns")
+	ACannon* Cannon2;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI")
+	FName WaypointTag;
 	
 	// Sets default values for this pawn's properties
 	ATankPawn();
@@ -67,6 +72,11 @@ public:
 
 	void Fire();
 	void FireSpecial();
+	void SetupCannon(TSubclassOf<ACannon> InCannonClass);
+	void ChangeCannon();
+	void AddBulletsProj(int bullets);
+	void AddBulletsTrace(int bullets);
+	void AddBulletsGun(int bullets);
 
 protected:
 	// Called when the game starts or when spawned
@@ -87,6 +97,8 @@ private:
 	float RightScale = 0;
 	float RotateScale = 0;
 	float CurrentRotateScale = 0;
+
+	int ActiveCannon = 1;
 
 	class ATankPlayerController* TankController;
 };

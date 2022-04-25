@@ -5,13 +5,16 @@
 #include "CoreMinimal.h"
 #include "Components/ArrowComponent.h"
 #include "GameFramework/Actor.h"
+#include "Projectile.h"
 #include "Cannon.generated.h"
+
 
 UENUM()
 enum class ECannonType
 {
 	Projectile UMETA(DisplayName = "Projectile"),
-	Trace UMETA(DisplayName = "Trace")
+	Trace UMETA(DisplayName = "Trace") ,
+	Bullets UMETA(DisplayName = "Bullets")
 };
 
 
@@ -22,11 +25,15 @@ class LESSON2_API ACannon : public AActor
 	
 public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
+	USceneComponent* EmptyRoot;
+	
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
 	UStaticMeshComponent* Mesh;
 	
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Components")
 	UArrowComponent* SpawnPoint;
 	
+
 	// Sets default values for this actor's properties
 	ACannon();
 
@@ -34,13 +41,22 @@ public:
 	ECannonType Type;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cannon")
-	float FireRate = 1.0f;
-
+	float projectileFireRate = 1.0f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cannon")
 	int projectileAmmo = 30;
-	
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cannon")
+	float traceFireRate = 0.5f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cannon")
 	int traceAmmo = 30;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cannon")
+	float bulletsFireRate = 0.1f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cannon")
+	int bulletsAmmo = 300;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cannon")
+	TSubclassOf<AProjectile> ProjectileType;
 	
 	void Fire();
 	void FireSpecial();
@@ -56,6 +72,9 @@ public:
 	bool bReadyToFire = true;
 	FTimerHandle ReloadHandle;
 	void OnReload();
+	void AddBulletsProj(int bullets);
+	void AddBulletsTrace(int bullets);
+	void AddBulletsGun(int bullets);
 };
 
 

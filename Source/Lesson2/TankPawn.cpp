@@ -15,12 +15,12 @@ ATankPawn::ATankPawn()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	//Collision = CreateDefaultSubobject<UBoxComponent>("Collision");
-	//RootComponent = Collision;
+	Collision = CreateDefaultSubobject<UBoxComponent>("Collision");
+	RootComponent = Collision;
 	
 	TankBody = CreateDefaultSubobject<UStaticMeshComponent>("TankBody");
-	RootComponent = TankBody;
-	//TankBody->SetupAttachment(RootComponent);
+	//RootComponent = TankBody;
+	TankBody->SetupAttachment(RootComponent);
 
 	TankTurret = CreateDefaultSubobject<UStaticMeshComponent>("TankTurret");
 	TankTurret->SetupAttachment(TankBody);
@@ -58,12 +58,86 @@ void ATankPawn::Fire()
 {
 	if(Cannon)
 		Cannon->Fire();
+	else if(Cannon2)
+		Cannon2->Fire();
 }
 
 void ATankPawn::FireSpecial()
 {
 	if(Cannon)
 		Cannon->FireSpecial();
+	else if(Cannon2)
+		Cannon2->FireSpecial();
+}
+
+void ATankPawn::SetupCannon(TSubclassOf<ACannon> InCannonClass) 
+{
+	if(!Cannon && !Cannon2)
+	{
+		CannonClass = InCannonClass;
+		if(CannonClass)
+		{
+			auto CannonPos = CannonSpawnPoint->GetComponentTransform();
+			FActorSpawnParameters Parameters;
+			Parameters.Instigator = this;
+			Cannon = GetWorld()->SpawnActor<ACannon>(CannonClass, CannonPos, Parameters);
+			Cannon->AttachToComponent(CannonSpawnPoint, FAttachmentTransformRules::SnapToTargetIncludingScale);
+		}
+	}
+	else if(Cannon && !Cannon2)
+	{
+		CannonClass = InCannonClass;
+		if(CannonClass)
+		{
+			auto CannonPos = CannonSpawnPoint->GetComponentTransform();
+			FActorSpawnParameters Parameters;
+			Parameters.Instigator = this;
+			Cannon2 = GetWorld()->SpawnActor<ACannon>(CannonClass, CannonPos, Parameters);
+			Cannon2->AttachToComponent(CannonSpawnPoint, FAttachmentTransformRules::SnapToTargetIncludingScale);
+		}
+	}
+	else if(Cannon && Cannon2)
+	{
+		Cannon->Destroy();
+		Cannon = nullptr;
+		
+		CannonClass = InCannonClass;
+		if(CannonClass)
+		{
+			auto CannonPos = CannonSpawnPoint->GetComponentTransform();
+			FActorSpawnParameters Parameters;
+			Parameters.Instigator = this;
+			Cannon = GetWorld()->SpawnActor<ACannon>(CannonClass, CannonPos, Parameters);
+			Cannon->AttachToComponent(CannonSpawnPoint, FAttachmentTransformRules::SnapToTargetIncludingScale);
+		}
+	}
+}
+
+void ATankPawn::ChangeCannon()
+{
+	if(Cannon && Cannon2) 
+	{
+		Cannon->SetActorHiddenInGame(true); 
+		Swap(Cannon, Cannon2);
+		Cannon->SetActorHiddenInGame(false); 
+	
+	}
+}
+
+void ATankPawn::AddBulletsProj(int bullets)
+{
+	if(Cannon)
+		Cannon->AddBulletsProj(bullets);
+}
+void ATankPawn::AddBulletsTrace(int bullets)
+{
+	if(Cannon)
+		Cannon->AddBulletsTrace(bullets);
+}
+void ATankPawn::AddBulletsGun(int bullets)
+{
+	if(Cannon)
+		Cannon->AddBulletsGun(bullets);
 }
 
 // Called when the game starts or when spawned
@@ -71,12 +145,7 @@ void ATankPawn::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if(CannonClass)
-	{
-		auto CannonPos = CannonSpawnPoint->GetComponentTransform();
-		Cannon = Cast<ACannon>(GetWorld()->SpawnActor(CannonClass, &CannonPos));
-		Cannon->AttachToComponent(CannonSpawnPoint, FAttachmentTransformRules::SnapToTargetIncludingScale);
-	}
+	SetupCannon(CannonClass);
 }
 
 void ATankPawn::Destroyed()
@@ -84,6 +153,8 @@ void ATankPawn::Destroyed()
 	Super::Destroyed();
 	if(Cannon)
 		Cannon->Destroy();
+	if(Cannon2)
+		Cannon2->Destroy();
 }
 
 // Called every frame
