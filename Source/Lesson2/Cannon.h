@@ -42,24 +42,18 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cannon")
 	float projectileFireRate = 1.0f;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cannon")
-	int projectileAmmo = 30;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cannon")
 	float traceFireRate = 0.5f;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cannon")
-	int traceAmmo = 30;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cannon")
 	float bulletsFireRate = 0.1f;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cannon")
-	int bulletsAmmo = 300;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Cannon")
 	TSubclassOf<AProjectile> ProjectileType;
 	
-	void Fire();
-	void FireSpecial();
+	void Fire(int& ammo1, int& ammo2, int& ammo3);
+	void FireSpecial(int& ammo1, int& ammo2, int& ammo3);
 
 protected:
 	// Called when the game starts or when spawned
@@ -72,9 +66,6 @@ public:
 	bool bReadyToFire = true;
 	FTimerHandle ReloadHandle;
 	void OnReload();
-	void AddBulletsProj(int bullets);
-	void AddBulletsTrace(int bullets);
-	void AddBulletsGun(int bullets);
 };
 
 

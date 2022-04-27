@@ -5,6 +5,7 @@
 
 #include "TankPlayerController.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Particles/ParticleEventManager.h"
 DECLARE_LOG_CATEGORY_EXTERN(TankLog, All, All);
 DEFINE_LOG_CATEGORY(TankLog); 
 
@@ -57,17 +58,17 @@ void ATankPawn::PossessedBy(AController* NewController)
 void ATankPawn::Fire()
 {
 	if(Cannon)
-		Cannon->Fire();
+		Cannon->Fire(projectileAmmo, traceAmmo, bulletsAmmo);
 	else if(Cannon2)
-		Cannon2->Fire();
+		Cannon2->Fire(projectileAmmo, traceAmmo, bulletsAmmo);
 }
 
 void ATankPawn::FireSpecial()
 {
 	if(Cannon)
-		Cannon->FireSpecial();
+		Cannon->FireSpecial(projectileAmmo, traceAmmo, bulletsAmmo);
 	else if(Cannon2)
-		Cannon2->FireSpecial();
+		Cannon2->FireSpecial(projectileAmmo, traceAmmo, bulletsAmmo);
 }
 
 void ATankPawn::SetupCannon(TSubclassOf<ACannon> InCannonClass) 
@@ -126,18 +127,18 @@ void ATankPawn::ChangeCannon()
 
 void ATankPawn::AddBulletsProj(int bullets)
 {
-	if(Cannon)
-		Cannon->AddBulletsProj(bullets);
+	projectileAmmo += bullets;
+	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, FString::Printf(TEXT("ProjectileAmmo left = %d"), projectileAmmo));
 }
 void ATankPawn::AddBulletsTrace(int bullets)
 {
-	if(Cannon)
-		Cannon->AddBulletsTrace(bullets);
+	traceAmmo += bullets;
+	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, FString::Printf(TEXT("TraceAmmo left = %d"), traceAmmo));
 }
 void ATankPawn::AddBulletsGun(int bullets)
 {
-	if(Cannon)
-		Cannon->AddBulletsGun(bullets);
+	bulletsAmmo += bullets;
+	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, FString::Printf(TEXT("BulletAmmo left = %d"), bulletsAmmo));
 }
 
 // Called when the game starts or when spawned

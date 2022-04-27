@@ -6,6 +6,7 @@
 #include "DrawDebugHelpers.h"
 
 
+
 // Sets default values
 ACannon::ACannon()
 {
@@ -22,7 +23,7 @@ ACannon::ACannon()
 	SpawnPoint->SetupAttachment(RootComponent);
 }
 
-void ACannon::Fire()
+void ACannon::Fire(int& ammo1, int& ammo2, int& ammo3)
 {
 	if(!bReadyToFire)
 		return;
@@ -31,7 +32,7 @@ void ACannon::Fire()
 	{
 	case ECannonType::Projectile:
 		{
-			if(projectileAmmo > 0)
+			if(ammo1 > 0)
 			{
 				if(ProjectileType)
 				{
@@ -42,8 +43,8 @@ void ACannon::Fire()
 					SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 					GetWorld()->SpawnActor<AProjectile>(ProjectileType, SpawnPoint->GetComponentTransform(), SpawnParameters);
 
-					projectileAmmo -= 1;
-					GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, FString::Printf(TEXT("ProjectileAmmo left = %d"), projectileAmmo));
+					ammo1 -= 1;
+					GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, FString::Printf(TEXT("ProjectileAmmo left = %d"), ammo1));
 				}
 				bReadyToFire = false;
 				GetWorld()->GetTimerManager().SetTimer(ReloadHandle, this, &ACannon::OnReload, projectileFireRate, false);
@@ -51,7 +52,7 @@ void ACannon::Fire()
 		}
 		break;
 	case ECannonType::Trace:
-		if(traceAmmo > 0)
+		if(ammo2 > 0)
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, FString::Printf(TEXT("Trace")));
 			
@@ -77,8 +78,8 @@ void ACannon::Fire()
 			{
 				DrawDebugLine(GetWorld(), Start, End, FColor::Purple, false, 0.1, 0,5);
 			}
-			traceAmmo -= 1;
-			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, FString::Printf(TEXT("TraceAmmo left = %d"), traceAmmo));
+			ammo2 -= 1;
+			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, FString::Printf(TEXT("TraceAmmo left = %d"), ammo2));
 
 			bReadyToFire = false;
 			GetWorld()->GetTimerManager().SetTimer(ReloadHandle, this, &ACannon::OnReload, traceFireRate, false);
@@ -86,7 +87,7 @@ void ACannon::Fire()
 		break;
 	case ECannonType::Bullets:
 		{
-			if(bulletsAmmo > 0)
+			if(ammo3 > 0)
 			{
 				if(ProjectileType)
 				{
@@ -97,8 +98,8 @@ void ACannon::Fire()
 					SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 					GetWorld()->SpawnActor<AProjectile>(ProjectileType, SpawnPoint->GetComponentTransform(), SpawnParameters);
 
-					bulletsAmmo -= 1;
-					GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, FString::Printf(TEXT("BulletAmmo left = %d"), bulletsAmmo));
+					ammo3 -= 1;
+					GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, FString::Printf(TEXT("BulletAmmo left = %d"), ammo3));
 				}
 				bReadyToFire = false;
 				GetWorld()->GetTimerManager().SetTimer(ReloadHandle, this, &ACannon::OnReload, bulletsFireRate, false);
@@ -109,39 +110,39 @@ void ACannon::Fire()
 
 }
 
-void ACannon::FireSpecial()
+void ACannon::FireSpecial(int& ammo1, int& ammo2, int& ammo3)
 {
 	if(!bReadyToFire)
 		return;
 	switch (Type)
 	{
 	case ECannonType::Projectile:
-		if(projectileAmmo > 2)
+		if(ammo1 > 2)
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, FString::Printf(TEXT("ProjectileSpecial")));
-			projectileAmmo -= 3;
-			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, FString::Printf(TEXT("ProjectileAmmo left = %d"), projectileAmmo));
+			ammo1 -= 3;
+			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, FString::Printf(TEXT("ProjectileAmmo left = %d"), ammo1));
 			bReadyToFire = false;
 			GetWorld()->GetTimerManager().SetTimer(ReloadHandle, this, &ACannon::OnReload, projectileFireRate*3, false);
 		}
 		break;
 	case ECannonType::Trace:
-		if(traceAmmo > 2)
+		if(ammo2 > 2)
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, FString::Printf(TEXT("TraceSpecial")));
-			traceAmmo -= 3;
-			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, FString::Printf(TEXT("TraceAmmo left = %d"), traceAmmo));
+			ammo2 -= 3;
+			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, FString::Printf(TEXT("TraceAmmo left = %d"), ammo2));
 			bReadyToFire = false;
 			GetWorld()->GetTimerManager().SetTimer(ReloadHandle, this, &ACannon::OnReload, traceFireRate*3, false);
 		}
 		break;
 	case ECannonType::Bullets:
 		{
-			if(bulletsAmmo > 2)
+			if(ammo3 > 2)
 			{
 				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, FString::Printf(TEXT("BulletSpecial")));
-				bulletsAmmo -= 3;
-				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, FString::Printf(TEXT("BulletAmmo left = %d"), bulletsAmmo));
+				ammo3 -= 3;
+				GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, FString::Printf(TEXT("BulletAmmo left = %d"), ammo3));
 				bReadyToFire = false;
 				GetWorld()->GetTimerManager().SetTimer(ReloadHandle, this, &ACannon::OnReload, bulletsFireRate*3, false);
 			}
@@ -170,21 +171,4 @@ void ACannon::OnReload()
 	bReadyToFire = true;
 }
 
-void ACannon::AddBulletsProj(int bullets)
-{
-	projectileAmmo += bullets;
-	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, FString::Printf(TEXT("ProjectileAmmo left = %d"), projectileAmmo));
-}
-
-void ACannon::AddBulletsTrace(int bullets)
-{
-	traceAmmo += bullets;
-	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, FString::Printf(TEXT("TraceAmmo left = %d"), traceAmmo));
-}
-
-void ACannon::AddBulletsGun(int bullets)
-{
-	bulletsAmmo += bullets;
-	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Red, FString::Printf(TEXT("BulletAmmo left = %d"), bulletsAmmo));
-}
 

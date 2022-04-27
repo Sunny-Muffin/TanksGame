@@ -58,6 +58,14 @@ public:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "Guns")
 	ACannon* Cannon2;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Ammunition")
+	int projectileAmmo = 30;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Ammunition")
+	int traceAmmo = 30;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Ammunition")
+	int bulletsAmmo = 300;
+
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI")
 	FName WaypointTag;
 	
